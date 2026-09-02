@@ -58,12 +58,20 @@
             border-radius: 6px;
         }
 
+        .story-box {
+            background-color: #252525;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+
         .clue-box {
             background-color: #2c2c2c;
             border-left: 4px solid var(--accent);
             padding: 15px;
-            margin: 20px 0;
-            min-height: 100px;
+            margin: 15px 0;
+            min-height: 60px;
         }
 
         .clue-box ul {
@@ -137,15 +145,21 @@
         <h1>DETETIVE DO SANGUE</h1>
         <p>O Mistério dos Tipos Sanguíneos</p>
         <div class="stats">
-            <span>Caso: <span id="case-num">1</span>/5</span>
+            <span>Caso: <span id="case-num">1</span>/8</span>
             <span>Pontuação: <span id="score">0</span></span>
         </div>
     </header>
 
     <main id="game-screen">
         <h3 id="case-title">Investigação em andamento...</h3>
+        
+        <div class="story-box">
+            <strong>Relatório da Cena / Heredograma:</strong>
+            <p id="case-story"></p>
+        </div>
+
         <div class="clue-box">
-            <strong>Pistas reveladas:</strong>
+            <strong>Dicas do Laboratório (Máx: 2):</strong>
             <ul id="clues-list"></ul>
         </div>
 
@@ -153,7 +167,7 @@
         <div class="options-grid" id="options-container"></div>
 
         <div class="action-btns">
-            <button id="btn-next-clue" onclick="game.revealClue()">Pedir Mais Pista (-pontos)</button>
+            <button id="btn-next-clue" onclick="game.revealClue()">Pedir Dica Extra (-pontos)</button>
         </div>
 
         <div id="feedback" class="hidden"></div>
@@ -169,48 +183,75 @@
 <script>
 const casesData = [
     {
-        title: "Caso 01 — Emergência no Hospital",
+        title: "Caso 01 — O Acidente na Rodovia",
+        story: "Um motorista deu entrada no pronto-socorro precisando de sangue. O paramédico anotou que o paciente não possui os antígenos A e B nas hemácias, mas a análise rápida mostrou presença de aglutinação no teste com soro Anti-Rh.",
         answer: "O+",
         clues: [
-            "Não possui antígenos A nem B na superfície das hemácias.",
-            "Seu sangue possui o fator Rh positivo.",
-            "Pode doar para A+, B+, AB+ e O+."
+            "Dica 1: A ausência de antígenos A e B indica sangue do tipo O.",
+            "Dica 2: A presença do fator Rh faz com que seja um tipo sanguíneo positivo."
         ]
     },
     {
-        title: "Caso 02 — O Doador Misterioso",
+        title: "Caso 02 — O Doador Anônimo",
+        story: "Uma carta foi enviada ao banco de sangue dizendo que um doador secreto salvou vidas. Exames revelaram que suas hemácias não têm antígenos A, B nem o fator Rh.",
         answer: "O-",
         clues: [
-            "Não possui fator Rh (Rh negativo).",
-            "É considerado o doador universal de hemácias.",
-            "Só pode receber doação de pessoas com o seu mesmo tipo exato."
+            "Dica 1: O tipo O não possui antígenos A nem B.",
+            "Dica 2: A ausência total do fator Rh o torna O negativo (doador universal)."
         ]
     },
     {
-        title: "Caso 03 — Análise de Antígenos",
+        title: "Caso 03 — A Fuga do Suspeito",
+        story: "Gotas de sangue foram encontradas na janela de uma cena de crime. O laboratório identificou que a amostra reagiu com o soro Anti-A e reagiu com o soro Anti-Rh, mas permaneceu neutra no soro Anti-B.",
         answer: "A+",
         clues: [
-            "Possui o fator Rh positivo.",
-            "Possui antígeno A nas hemácias.",
-            "Pode receber sangue de A+, A-, O+ e O-."
+            "Dica 1: Reagir com Anti-A significa que tem o antígeno A.",
+            "Dica 2: Reagir com Anti-Rh indica fator Rh positivo."
         ]
     },
     {
-        title: "Caso 04 — Receptor Universal",
+        title: "Caso 04 — O Receptor Universal",
+        story: "Um paciente misterioso na UTI pode receber qualquer tipo de sangue sem sofrer rejeição imunológica. O teste de bancada revelou antígenos A, antígenos B e o fator Rh, todos presentes ao mesmo tempo.",
         answer: "AB+",
         clues: [
-            "Possui tanto antígeno A quanto antígeno B.",
-            "Possui o fator Rh positivo.",
-            "É considerado o receptor universal."
+            "Dica 1: Ter antígenos A e B simultaneamente caracteriza o tipo AB.",
+            "Dica 2: Por ter todos os antígenos e o fator Rh, ele é o receptor universal (AB+)."
         ]
     },
     {
-        title: "Caso 05 — Caso Raro",
+        title: "Caso 05 — O Mistério da Mala",
+        story: "Uma amostra de sangue coletada em um objeto suspeito passou pela centrifugação. O teste mostrou que há antígeno B nas hemácias, mas o teste para o fator Rh deu completamente negativo.",
         answer: "B-",
         clues: [
-            "Possui antígeno B nas hemácias.",
-            "Não possui o fator Rh.",
-            "Pode doar para B+, B-, AB+ e AB-."
+            "Dica 1: A presença do antígeno B confirma o tipo B.",
+            "Dica 2: O teste negativo para a proteína Rh confirma o sinal negativo (-)."
+        ]
+    },
+    {
+        title: "Caso 06 — O Heredograma da Família Silva",
+        story: "Analisando o heredograma: O pai tem sangue tipo A heterozigoto (Iᴬi) e a mãe tem sangue tipo B heterozigoto (I⠃i). O filho caçula herdou os alelos recessivos de ambos os pais e possui fator Rh negativo.",
+        answer: "O-",
+        clues: [
+            "Dica 1: O cruzamento entre heterozigotos (Iᴬi x I⠃i) pode gerar o genótipo recessivo (ii), que é tipo O.",
+            "Dica 2: Se herdou o fator negativo de ambos, o sangue é O-."
+        ]
+    },
+    {
+        title: "Caso 07 — O Heredograma do Suspeito",
+        story: "No heredograma investigado, o avô do suspeito é O- e a avó é AB+. O pai do suspeito herdou o antígeno B da mãe e o gene 'i' do pai. Além disso, o pai do suspeito é positivo para o fator Rh. Qual é o tipo sanguíneo do PAI do suspeito?",
+        answer: "B+",
+        clues: [
+            "Dica 1: Herdando o antígeno B da mãe e o gene 'i' do pai, o genótipo é I⠃i (Tipo B).",
+            "Dica 2: Com o fator Rh herdado da avó, o tipo é B+."
+        ]
+    },
+    {
+        title: "Caso 08 — Teste de Paternidade",
+        story: "Um heredograma em um processo mostra: Mãe tipo A- e Pai tipo B-. O filho do casal nasceu com sangue contendo tanto o antígeno A quanto o antígeno B em suas hemácias, mas não possui a proteína Rh.",
+        answer: "AB-",
+        clues: [
+            "Dica 1: Receber o gene A da mãe e o gene B do pai resulta no tipo codominante AB.",
+            "Dica 2: Como ambos os pais são Rh negativo (-), o filho não possui fator Rh (-)."
         ]
     }
 ];
@@ -250,16 +291,21 @@ class Game {
         const currentCase = casesData[this.currentCaseIndex];
         document.getElementById("case-num").innerText = this.currentCaseIndex + 1;
         document.getElementById("case-title").innerText = currentCase.title;
-        document.getElementById("clues-list").innerHTML = "";
+        document.getElementById("case-story").innerText = currentCase.story;
+        document.getElementById("clues-list").innerHTML = "<em>Nenhuma dica solicitada ainda. Tente resolver lendo a história!</em>";
         document.getElementById("feedback").className = "hidden";
         document.getElementById("btn-next-clue").disabled = false;
         
         this.cluesRevealed = 0;
-        this.revealClue();
     }
 
     revealClue() {
         const currentCase = casesData[this.currentCaseIndex];
+        
+        if (this.cluesRevealed === 0) {
+            document.getElementById("clues-list").innerHTML = "";
+        }
+
         if (this.cluesRevealed < currentCase.clues.length) {
             const ul = document.getElementById("clues-list");
             const li = document.createElement("li");
@@ -280,9 +326,9 @@ class Game {
 
         if (selectedType === currentCase.answer) {
             let pointsEarned = 0;
-            if (this.cluesRevealed === 1) pointsEarned = 5;
-            else if (this.cluesRevealed === 2) pointsEarned = 3;
-            else pointsEarned = 1;
+            if (this.cluesRevealed === 0) pointsEarned = 5;      // Decifrou só pela história
+            else if (this.cluesRevealed === 1) pointsEarned = 3; // Usou 1 dica
+            else pointsEarned = 1;                              // Usou 2 dicas
 
             this.score += pointsEarned;
             document.getElementById("score").innerText = this.score;
@@ -296,7 +342,7 @@ class Game {
             }, 1500);
         } else {
             feedback.className = "wrong";
-            feedback.innerText = "Resposta incorreta. Tente analisar as pistas novamente!";
+            feedback.innerText = "Resposta incorreta. Leia a história/heredograma atentamente!";
         }
     }
 
