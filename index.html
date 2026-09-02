@@ -35,6 +35,21 @@
             box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
             border: 3px solid var(--pink-main);
             text-align: center;
+            position: relative;
+        }
+
+        .music-control {
+            margin-bottom: 15px;
+        }
+
+        .btn-music {
+            background-color: #3b1126;
+            color: var(--pink-light);
+            border: 1px solid var(--pink-main);
+            padding: 8px 15px;
+            font-size: 0.9em;
+            border-radius: 20px;
+            cursor: pointer;
         }
 
         .detective-img {
@@ -128,6 +143,10 @@
 <body>
 
 <div class="game-container">
+    <div class="music-control">
+        <button id="btn-toggle-music" class="btn-music" onclick="toggleMusic()">🎵 Ligar/Desligar Música</button>
+    </div>
+
     <img src="https://i.postimg.co/264qS04P/pink-panther-detective.png" alt="Pantera Rosa Detetive" class="detective-img" id="panther-img">
     
     <header>
@@ -169,25 +188,38 @@
 </div>
 
 <script>
-// Sons do Jogo
+// Efeitos sonoros
 const audioClick = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
 const audioCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3');
 const audioWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3');
 
-// Música Tema da Pantera Cor-de-Rosa (Loop em segundo plano)
-const bgMusic = new Audio('https://ia800501.us.archive.org/28/items/ThePinkPantherTheme/The%20Pink%20Panther%20Theme.mp3');
+// Trilha Sonora Estilo Detetive/Suspense (Pixabay CDNs de alta estabilidade)
+const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=sneaky-spy-114212.mp3');
 bgMusic.loop = true;
-bgMusic.volume = 0.3;
+bgMusic.volume = 0.35;
+
+function toggleMusic() {
+    if (bgMusic.paused) {
+        bgMusic.play().then(() => {
+            document.getElementById('btn-toggle-music').innerText = "🔊 Música Tocando";
+        }).catch(e => console.log("Erro ao tocar:", e));
+    } else {
+        bgMusic.pause();
+        document.getElementById('btn-toggle-music').innerText = "🔈 Música Pausada";
+    }
+}
 
 function playClickSound() {
     audioClick.currentTime = 0;
     audioClick.play().catch(() => {});
 }
 
-// Inicia a música no primeiro clique do jogador na página
+// Inicia no primeiro clique em qualquer lugar da tela
 document.addEventListener('click', () => {
     if (bgMusic.paused) {
-        bgMusic.play().catch(() => {});
+        bgMusic.play().then(() => {
+            document.getElementById('btn-toggle-music').innerText = "🔊 Música Tocando";
+        }).catch(() => {});
     }
 }, { once: true });
 
