@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detetive do Sangue</title>
+    <title>Detetive do Sangue — Edição Pantera Rosa</title>
     <style>
         :root {
-            --primary: #b71c1c;
-            --secondary: #d32f2f;
-            --background: #121212;
-            --surface: #1e1e1e;
+            --pink-main: #ff69b4;
+            --pink-dark: #c71585;
+            --pink-light: #ffb6c1;
+            --background: #11050a;
+            --surface: #240a17;
             --text: #ffffff;
-            --accent: #ff5252;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             background-color: var(--background);
             color: var(--text);
             margin: 0;
@@ -28,24 +28,26 @@
 
         .game-container {
             background-color: var(--surface);
-            padding: 30px;
-            border-radius: 12px;
+            padding: 25px;
+            border-radius: 15px;
             max-width: 600px;
             width: 100%;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+            border: 3px solid var(--pink-main);
+            text-align: center;
         }
 
-        header {
-            text-align: center;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+        .detective-img {
+            width: 180px;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 10px;
         }
 
         h1 {
-            color: var(--accent);
-            margin: 0 0 10px 0;
+            color: var(--pink-main);
+            margin: 10px 0;
+            text-shadow: 2px 2px #000;
         }
 
         .stats {
@@ -53,34 +55,23 @@
             justify-content: space-between;
             font-size: 1.1em;
             font-weight: bold;
-            background-color: #2a2a2a;
+            background-color: #3b1126;
             padding: 10px 15px;
-            border-radius: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--pink-dark);
         }
 
-        .story-box {
-            background-color: #252525;
-            border-left: 4px solid var(--primary);
+        .story-box, .clue-box {
+            background-color: #1a0611;
+            border-left: 5px solid var(--pink-main);
             padding: 15px;
             margin: 15px 0;
-            line-height: 1.5;
+            text-align: left;
+            border-radius: 4px;
         }
 
         .clue-box {
-            background-color: #2c2c2c;
-            border-left: 4px solid var(--accent);
-            padding: 15px;
-            margin: 15px 0;
-            min-height: 60px;
-        }
-
-        .clue-box ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .clue-box li {
-            margin-bottom: 8px;
+            border-left-color: var(--pink-light);
         }
 
         .options-grid {
@@ -91,79 +82,77 @@
         }
 
         button {
-            background-color: var(--primary);
+            background-color: var(--pink-dark);
             color: white;
-            border: none;
+            border: 2px solid var(--pink-main);
             padding: 12px;
             font-size: 1em;
+            font-family: inherit;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
         button:hover {
-            background-color: var(--secondary);
+            background-color: var(--pink-main);
+            color: #000;
+            transform: scale(1.03);
         }
 
         button:disabled {
-            background-color: #555;
+            background-color: #442233;
+            border-color: #663344;
+            color: #886677;
             cursor: not-allowed;
-        }
-
-        .action-btns {
-            display: flex;
-            gap: 10px;
+            transform: none;
         }
 
         .action-btns button {
-            flex: 1;
-            background-color: #333;
-        }
-
-        .action-btns button:hover {
-            background-color: #444;
+            width: 100%;
+            background-color: #4a1531;
         }
 
         #feedback {
             margin-top: 15px;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
             font-weight: bold;
         }
 
-        .correct { background-color: #2e7d32; }
-        .wrong { background-color: #c62828; }
+        .correct { background-color: #1b5e20; border: 1px solid #4caf50; }
+        .wrong { background-color: #b71c1c; border: 1px solid #f44336; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="game-container">
+    <!-- Imagem da Pantera Rosa Detetive -->
+    <img src="https://i.postimg.co/264qS04P/pink-panther-detective.png" alt="Pantera Rosa Detetive" class="detective-img" id="panther-img">
+    
     <header>
-        <h1>DETETIVE DO SANGUE</h1>
-        <p>O Mistério dos Tipos Sanguíneos</p>
+        <h1>PANTERA DETETIVE DO SANGUE</h1>
         <div class="stats">
             <span>Caso: <span id="case-num">1</span>/8</span>
-            <span>Pontuação: <span id="score">0</span></span>
+            <span>Pontos: <span id="score">0</span></span>
         </div>
     </header>
 
     <main id="game-screen">
-        <h3 id="case-title">Investigação em andamento...</h3>
+        <h3 id="case-title" style="color: var(--pink-light);">Investigação em andamento...</h3>
         
         <div class="story-box">
-            <strong>Relatório da Cena / Heredograma:</strong>
+            <strong style="color: var(--pink-main);">Relatório do Caso:</strong>
             <p id="case-story"></p>
         </div>
 
         <div class="clue-box">
-            <strong>Dicas do Laboratório (Máx: 2):</strong>
-            <ul id="clues-list"></ul>
+            <strong style="color: var(--pink-light);">Pistas (Máx: 2):</strong>
+            <ul id="clues-list" style="padding-left: 20px; margin-top: 5px;"></ul>
         </div>
 
-        <p>Qual é o tipo sanguíneo correto?</p>
+        <p>Qual é o tipo sanguíneo?</p>
         <div class="options-grid" id="options-container"></div>
 
         <div class="action-btns">
@@ -173,14 +162,36 @@
         <div id="feedback" class="hidden"></div>
     </main>
 
-    <div id="end-screen" class="hidden" style="text-align: center;">
-        <h2>Investigação Concluída!</h2>
-        <p>Sua pontuação final foi: <strong id="final-score">0</strong> pontos.</p>
+    <div id="end-screen" class="hidden">
+        <h2>Casos Solucionados!</h2>
+        <p>Sua pontuação final foi: <strong id="final-score" style="color: var(--pink-main);">0</strong> pontos.</p>
         <button onclick="location.reload()">Jogar Novamente</button>
     </div>
 </div>
 
 <script>
+// Sons do Jogo usando Efeitos Sonoros Gratuitos (Web Audio API / Links de Áudio)
+const audioClick = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+const audioCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3');
+const audioWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3');
+
+// Música de Fundo de Suspense
+const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a7213d.mp3?filename=suspense-112194.mp3');
+bgMusic.loop = true;
+bgMusic.volume = 0.3;
+
+function playClickSound() {
+    audioClick.currentTime = 0;
+    audioClick.play().catch(() => {});
+}
+
+// Inicia música no primeiro clique (requisito dos navegadores)
+document.addEventListener('click', () => {
+    if (bgMusic.paused) {
+        bgMusic.play().catch(() => {});
+    }
+}, { once: true });
+
 const casesData = [
     {
         title: "Caso 01 — O Acidente na Rodovia",
@@ -277,7 +288,10 @@ class Game {
         bloodTypes.forEach(type => {
             const btn = document.createElement("button");
             btn.innerText = type;
-            btn.onclick = () => this.checkAnswer(type);
+            btn.onclick = () => {
+                playClickSound();
+                this.checkAnswer(type);
+            };
             container.appendChild(btn);
         });
     }
@@ -292,7 +306,7 @@ class Game {
         document.getElementById("case-num").innerText = this.currentCaseIndex + 1;
         document.getElementById("case-title").innerText = currentCase.title;
         document.getElementById("case-story").innerText = currentCase.story;
-        document.getElementById("clues-list").innerHTML = "<em>Nenhuma dica solicitada ainda. Tente resolver lendo a história!</em>";
+        document.getElementById("clues-list").innerHTML = "<em>Nenhuma dica solicitada ainda.</em>";
         document.getElementById("feedback").className = "hidden";
         document.getElementById("btn-next-clue").disabled = false;
         
@@ -300,6 +314,7 @@ class Game {
     }
 
     revealClue() {
+        playClickSound();
         const currentCase = casesData[this.currentCaseIndex];
         
         if (this.cluesRevealed === 0) {
@@ -325,24 +340,26 @@ class Game {
         feedback.classList.remove("hidden");
 
         if (selectedType === currentCase.answer) {
+            audioCorrect.play().catch(() => {});
             let pointsEarned = 0;
-            if (this.cluesRevealed === 0) pointsEarned = 5;      // Decifrou só pela história
-            else if (this.cluesRevealed === 1) pointsEarned = 3; // Usou 1 dica
-            else pointsEarned = 1;                              // Usou 2 dicas
+            if (this.cluesRevealed === 0) pointsEarned = 5;
+            else if (this.cluesRevealed === 1) pointsEarned = 3;
+            else pointsEarned = 1;
 
             this.score += pointsEarned;
             document.getElementById("score").innerText = this.score;
             
             feedback.className = "correct";
-            feedback.innerText = `Correto! Você ganhou ${pointsEarned} ponto(s).`;
+            feedback.innerText = `Excelente, detetive! Você ganhou ${pointsEarned} ponto(s).`;
             
             setTimeout(() => {
                 this.currentCaseIndex++;
                 this.loadCase();
             }, 1500);
         } else {
+            audioWrong.play().catch(() => {});
             feedback.className = "wrong";
-            feedback.innerText = "Resposta incorreta. Leia a história/heredograma atentamente!";
+            feedback.innerText = "Pista falsa! Tente analisar os fatos novamente.";
         }
     }
 
