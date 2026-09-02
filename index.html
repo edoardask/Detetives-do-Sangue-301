@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detetive do Sangue</title>
+    <style>
+        :root {
+            --primary: #b71c1c;
+            --secondary: #d32f2f;
+            --background: #121212;
+            --surface: #1e1e1e;
+            --text: #ffffff;
+            --accent: #ff5252;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            background-color: var(--surface);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 2px solid var(--primary);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--accent);
+            margin: 0 0 10px 0;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1em;
+            font-weight: bold;
+            background-color: #2a2a2a;
+            padding: 10px 15px;
+            border-radius: 6px;
+        }
+
+        .clue-box {
+            background-color: #2c2c2c;
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin: 20px 0;
+            min-height: 100px;
+        }
+
+        .clue-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .clue-box li {
+            margin-bottom: 8px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--secondary);
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btns button {
+            flex: 1;
+            background-color: #333;
+        }
+
+        .action-btns button:hover {
+            background-color: #444;
+        }
+
+        #feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .correct { background-color: #2e7d32; }
+        .wrong { background-color: #c62828; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <header>
+        <h1>DETETIVE DO SANGUE</h1>
+        <p>O Mistério dos Tipos Sanguíneos</p>
+        <div class="stats">
+            <span>Caso: <span id="case-num">1</span>/5</span>
+            <span>Pontuação: <span id="score">0</span></span>
+        </div>
+    </header>
+
+    <main id="game-screen">
+        <h3 id="case-title">Investigação em andamento...</h3>
+        <div class="clue-box">
+            <strong>Pistas reveladas:</strong>
+            <ul id="clues-list"></ul>
+        </div>
+
+        <p>Qual é o tipo sanguíneo correto?</p>
+        <div class="options-grid" id="options-container"></div>
+
+        <div class="action-btns">
+            <button id="btn-next-clue" onclick="game.revealClue()">Pedir Mais Pista (-pontos)</button>
+        </div>
+
+        <div id="feedback" class="hidden"></div>
+    </main>
+
+    <div id="end-screen" class="hidden" style="text-align: center;">
+        <h2>Investigação Concluída!</h2>
+        <p>Sua pontuação final foi: <strong id="final-score">0</strong> pontos.</p>
+        <button onclick="location.reload()">Jogar Novamente</button>
+    </div>
+</div>
+
+<script>
+const casesData = [
+    {
+        title: "Caso 01 — Emergência no Hospital",
+        answer: "O+",
+        clues: [
+            "Não possui antígenos A nem B na superfície das hemácias.",
+            "Seu sangue possui o fator Rh positivo.",
+            "Pode doar para A+, B+, AB+ e O+."
+        ]
+    },
+    {
+        title: "Caso 02 — O Doador Misterioso",
+        answer: "O-",
+        clues: [
+            "Não possui fator Rh (Rh negativo).",
+            "É considerado o doador universal de hemácias.",
+            "Só pode receber doação de pessoas com o seu mesmo tipo exato."
+        ]
+    },
+    {
+        title: "Caso 03 — Análise de Antígenos",
+        answer: "A+",
+        clues: [
+            "Possui o fator Rh positivo.",
+            "Possui antígeno A nas hemácias.",
+            "Pode receber sangue de A+, A-, O+ e O-."
+        ]
+    },
+    {
+        title: "Caso 04 — Receptor Universal",
+        answer: "AB+",
+        clues: [
+            "Possui tanto antígeno A quanto antígeno B.",
+            "Possui o fator Rh positivo.",
+            "É considerado o receptor universal."
+        ]
+    },
+    {
+        title: "Caso 05 — Caso Raro",
+        answer: "B-",
+        clues: [
+            "Possui antígeno B nas hemácias.",
+            "Não possui o fator Rh.",
+            "Pode doar para B+, B-, AB+ e AB-."
+        ]
+    }
+];
+
+const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+class Game {
+    constructor() {
+        this.currentCaseIndex = 0;
+        this.score = 0;
+        this.cluesRevealed = 0;
+        this.init();
+    }
+
+    init() {
+        this.renderOptions();
+        this.loadCase();
+    }
+
+    renderOptions() {
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        bloodTypes.forEach(type => {
+            const btn = document.createElement("button");
+            btn.innerText = type;
+            btn.onclick = () => this.checkAnswer(type);
+            container.appendChild(btn);
+        });
+    }
+
+    loadCase() {
+        if (this.currentCaseIndex >= casesData.length) {
+            this.endGame();
+            return;
+        }
+
+        const currentCase = casesData[this.currentCaseIndex];
+        document.getElementById("case-num").innerText = this.currentCaseIndex + 1;
+        document.getElementById("case-title").innerText = currentCase.title;
+        document.getElementById("clues-list").innerHTML = "";
+        document.getElementById("feedback").className = "hidden";
+        document.getElementById("btn-next-clue").disabled = false;
+        
+        this.cluesRevealed = 0;
+        this.revealClue();
+    }
+
+    revealClue() {
+        const currentCase = casesData[this.currentCaseIndex];
+        if (this.cluesRevealed < currentCase.clues.length) {
+            const ul = document.getElementById("clues-list");
+            const li = document.createElement("li");
+            li.innerText = currentCase.clues[this.cluesRevealed];
+            ul.appendChild(li);
+            this.cluesRevealed++;
+        }
+
+        if (this.cluesRevealed >= currentCase.clues.length) {
+            document.getElementById("btn-next-clue").disabled = true;
+        }
+    }
+
+    checkAnswer(selectedType) {
+        const currentCase = casesData[this.currentCaseIndex];
+        const feedback = document.getElementById("feedback");
+        feedback.classList.remove("hidden");
+
+        if (selectedType === currentCase.answer) {
+            let pointsEarned = 0;
+            if (this.cluesRevealed === 1) pointsEarned = 5;
+            else if (this.cluesRevealed === 2) pointsEarned = 3;
+            else pointsEarned = 1;
+
+            this.score += pointsEarned;
+            document.getElementById("score").innerText = this.score;
+            
+            feedback.className = "correct";
+            feedback.innerText = `Correto! Você ganhou ${pointsEarned} ponto(s).`;
+            
+            setTimeout(() => {
+                this.currentCaseIndex++;
+                this.loadCase();
+            }, 1500);
+        } else {
+            feedback.className = "wrong";
+            feedback.innerText = "Resposta incorreta. Tente analisar as pistas novamente!";
+        }
+    }
+
+    endGame() {
+        document.getElementById("game-screen").classList.add("hidden");
+        document.getElementById("end-screen").classList.remove("hidden");
+        document.getElementById("final-score").innerText = this.score;
+    }
+}
+
+const game = new Game();
+</script>
+</body>
+</html>
