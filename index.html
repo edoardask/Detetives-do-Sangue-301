@@ -32,7 +32,7 @@
             border-radius: 15px;
             max-width: 600px;
             width: 100%;
-            box-shadow: 0 0 20px rgba(211, 47, 47, 0.4);
+            box-shadow: 0 0 20px rgba(211, 47, 47, 0.6);
             border: 3px solid var(--red-main);
             text-align: center;
             position: relative;
@@ -50,6 +50,7 @@
             font-size: 0.9em;
             border-radius: 20px;
             cursor: pointer;
+            font-weight: bold;
         }
 
         .detective-icon {
@@ -143,7 +144,7 @@
 
 <div class="game-container">
     <div class="music-control">
-        <button id="btn-toggle-music" class="btn-music" onclick="togglePinkPantherTheme()">🎵 Tocar Tema Suspense</button>
+        <button id="btn-toggle-music" class="btn-music" onclick="toggleTerrorTheme()">🔊 Tocar Música de Suspense (Alta)</button>
     </div>
 
     <span class="detective-icon">🔍🩸</span>
@@ -187,36 +188,38 @@
 </div>
 
 <script>
-// Sintetizador Web Audio API para tocar o Tema em tom de suspense
+// Sintetizador Web Audio API ajustado para som ALTO e clima de suspense de investigação
 let audioCtx = null;
 let isPlayingTheme = false;
 let themeTimeout = null;
 
 const notes = {
-    'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23,
-    'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00,
-    'A#4': 466.16, 'B4': 493.88, 'C5': 523.25, 'C#5': 554.37, 'D5': 587.33
+    'C3': 130.81, 'C#3': 138.59, 'D3': 146.83, 'D#3': 155.56,
+    'E3': 164.81, 'F3': 174.61, 'F#3': 185.00, 'G3': 196.00,
+    'G#3': 207.65, 'A3': 220.00, 'A#3': 233.08, 'B3': 246.94,
+    'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13
 };
 
-const suspenseMelody = [
-    { note: 'D#4', duration: 0.2 }, { note: 'E4', duration: 0.5 },
-    { note: 'F#4', duration: 0.2 }, { note: 'G4', duration: 0.5 },
-    { note: 'D#4', duration: 0.2 }, { note: 'E4', duration: 0.3 },
-    { note: 'F#4', duration: 0.2 }, { note: 'G4', duration: 0.3 },
-    { note: 'C5', duration: 0.2 },  { note: 'B4', duration: 0.3 },
-    { note: 'E4', duration: 0.2 },  { note: 'G4', duration: 0.3 },
-    { note: 'B4', duration: 0.2 },  { note: 'A#4', duration: 0.6 }
+// Sequência dramática e tensa em tom menor
+const darkSuspenseMelody = [
+    { note: 'C3', duration: 0.4 }, { note: 'C#3', duration: 0.4 },
+    { note: 'C3', duration: 0.4 }, { note: 'C#3', duration: 0.4 },
+    { note: 'D#3', duration: 0.3 }, { note: 'D3', duration: 0.3 },
+    { note: 'C3', duration: 0.6 }, { note: 'G3', duration: 0.5 },
+    { note: 'F#3', duration: 0.5 }, { note: 'F3', duration: 0.6 }
 ];
 
-function playNote(freq, duration, startTime) {
+function playNote(freq, duration, startTime, maxVolume = 0.5) {
     if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     
-    osc.type = 'triangle';
+    // Usa onda 'sawtooth' para um tom mais encorpado e tenso
+    osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(freq, startTime);
     
-    gain.gain.setValueAtTime(0.15, startTime);
+    // Volume elevado (0.5 é o nível alto seguro sem distorcer)
+    gain.gain.setValueAtTime(maxVolume, startTime);
     gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
     
     osc.connect(gain);
@@ -226,56 +229,56 @@ function playNote(freq, duration, startTime) {
     osc.stop(startTime + duration);
 }
 
-function startPinkPantherTheme() {
+function startTerrorTheme() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
     
     let currentTime = audioCtx.currentTime;
-    suspenseMelody.forEach(item => {
-        playNote(notes[item.note], item.duration, currentTime);
-        currentTime += item.duration + 0.1;
+    darkSuspenseMelody.forEach(item => {
+        playNote(notes[item.note], item.duration, currentTime, 0.45);
+        currentTime += item.duration + 0.15;
     });
 
     const totalDuration = (currentTime - audioCtx.currentTime) * 1000;
     themeTimeout = setTimeout(() => {
-        if (isPlayingTheme) startPinkPantherTheme();
+        if (isPlayingTheme) startTerrorTheme();
     }, totalDuration);
 }
 
-function togglePinkPantherTheme() {
+function toggleTerrorTheme() {
     const btn = document.getElementById('btn-toggle-music');
     if (!isPlayingTheme) {
         isPlayingTheme = true;
-        btn.innerText = "🔊 Tema Tocando";
-        startPinkPantherTheme();
+        btn.innerText = "🔊 Música Tocando (Alta)";
+        startTerrorTheme();
     } else {
         isPlayingTheme = false;
-        btn.innerText = "🔈 Tema Pausado";
+        btn.innerText = "🔈 Música Pausada";
         clearTimeout(themeTimeout);
     }
 }
 
 function playClickSound() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    playNote(440, 0.05, audioCtx.currentTime);
+    playNote(300, 0.05, audioCtx.currentTime, 0.3);
 }
 
 function playCorrectSound() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    playNote(523.25, 0.1, audioCtx.currentTime);
-    playNote(659.25, 0.2, audioCtx.currentTime + 0.1);
+    playNote(523.25, 0.1, audioCtx.currentTime, 0.4);
+    playNote(659.25, 0.2, audioCtx.currentTime + 0.1, 0.4);
 }
 
 function playWrongSound() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    playNote(220, 0.15, audioCtx.currentTime);
-    playNote(196, 0.25, audioCtx.currentTime + 0.15);
+    playNote(150, 0.2, audioCtx.currentTime, 0.5);
+    playNote(130, 0.3, audioCtx.currentTime + 0.15, 0.5);
 }
 
 document.addEventListener('click', () => {
     if (!isPlayingTheme) {
-        togglePinkPantherTheme();
+        toggleTerrorTheme();
     }
 }, { once: true });
 
