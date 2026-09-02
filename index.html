@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detetive do Sangue — Edição Pantera Rosa</title>
+    <title>Detetive do Sangue</title>
     <style>
         :root {
-            --pink-main: #ff69b4;
-            --pink-dark: #c71585;
-            --pink-light: #ffb6c1;
-            --background: #11050a;
-            --surface: #240a17;
+            --red-main: #d32f2f;
+            --red-dark: #8b0000;
+            --red-light: #ff6666;
+            --background: #0d0202;
+            --surface: #1f0505;
             --text: #ffffff;
         }
 
@@ -32,8 +32,8 @@
             border-radius: 15px;
             max-width: 600px;
             width: 100%;
-            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
-            border: 3px solid var(--pink-main);
+            box-shadow: 0 0 20px rgba(211, 47, 47, 0.4);
+            border: 3px solid var(--red-main);
             text-align: center;
             position: relative;
         }
@@ -43,24 +43,23 @@
         }
 
         .btn-music {
-            background-color: #3b1126;
-            color: var(--pink-light);
-            border: 1px solid var(--pink-main);
+            background-color: #3b0a0a;
+            color: var(--red-light);
+            border: 1px solid var(--red-main);
             padding: 8px 15px;
             font-size: 0.9em;
             border-radius: 20px;
             cursor: pointer;
         }
 
-        .detective-img {
-            width: 180px;
-            height: auto;
-            border-radius: 10px;
+        .detective-icon {
+            font-size: 4rem;
             margin-bottom: 10px;
+            display: block;
         }
 
         h1 {
-            color: var(--pink-main);
+            color: var(--red-main);
             margin: 10px 0;
             text-shadow: 2px 2px #000;
         }
@@ -70,15 +69,15 @@
             justify-content: space-between;
             font-size: 1.1em;
             font-weight: bold;
-            background-color: #3b1126;
+            background-color: #3b0a0a;
             padding: 10px 15px;
             border-radius: 8px;
-            border: 1px solid var(--pink-dark);
+            border: 1px solid var(--red-dark);
         }
 
         .story-box, .clue-box {
-            background-color: #1a0611;
-            border-left: 5px solid var(--pink-main);
+            background-color: #140303;
+            border-left: 5px solid var(--red-main);
             padding: 15px;
             margin: 15px 0;
             text-align: left;
@@ -86,7 +85,7 @@
         }
 
         .clue-box {
-            border-left-color: var(--pink-light);
+            border-left-color: var(--red-light);
         }
 
         .options-grid {
@@ -97,9 +96,9 @@
         }
 
         button {
-            background-color: var(--pink-dark);
+            background-color: var(--red-dark);
             color: white;
-            border: 2px solid var(--pink-main);
+            border: 2px solid var(--red-main);
             padding: 12px;
             font-size: 1em;
             font-family: inherit;
@@ -110,22 +109,22 @@
         }
 
         button:hover {
-            background-color: var(--pink-main);
+            background-color: var(--red-main);
             color: #000;
             transform: scale(1.03);
         }
 
         button:disabled {
-            background-color: #442233;
-            border-color: #663344;
-            color: #886677;
+            background-color: #331111;
+            border-color: #552222;
+            color: #774444;
             cursor: not-allowed;
             transform: none;
         }
 
         .action-btns button {
             width: 100%;
-            background-color: #4a1531;
+            background-color: #4a0d0d;
         }
 
         #feedback {
@@ -144,13 +143,13 @@
 
 <div class="game-container">
     <div class="music-control">
-        <button id="btn-toggle-music" class="btn-music" onclick="toggleMusic()">🎵 Ligar/Desligar Música</button>
+        <button id="btn-toggle-music" class="btn-music" onclick="togglePinkPantherTheme()">🎵 Tocar Tema Suspense</button>
     </div>
 
-    <img src="https://i.postimg.co/264qS04P/pink-panther-detective.png" alt="Pantera Rosa Detetive" class="detective-img" id="panther-img">
+    <span class="detective-icon">🔍🩸</span>
     
     <header>
-        <h1>PANTERA DETETIVE DO SANGUE</h1>
+        <h1>DETETIVE DO SANGUE</h1>
         <div class="stats">
             <span>Caso: <span id="case-num">1</span>/8</span>
             <span>Pontos: <span id="score">0</span></span>
@@ -158,15 +157,15 @@
     </header>
 
     <main id="game-screen">
-        <h3 id="case-title" style="color: var(--pink-light);">Investigação em andamento...</h3>
+        <h3 id="case-title" style="color: var(--red-light);">Investigação em andamento...</h3>
         
         <div class="story-box">
-            <strong style="color: var(--pink-main);">Relatório do Caso:</strong>
+            <strong style="color: var(--red-main);">Relatório do Caso:</strong>
             <p id="case-story"></p>
         </div>
 
         <div class="clue-box">
-            <strong style="color: var(--pink-light);">Pistas (Máx: 2):</strong>
+            <strong style="color: var(--red-light);">Pistas (Máx: 2):</strong>
             <ul id="clues-list" style="padding-left: 20px; margin-top: 5px;"></ul>
         </div>
 
@@ -182,44 +181,101 @@
 
     <div id="end-screen" class="hidden">
         <h2>Casos Solucionados!</h2>
-        <p>Sua pontuação final foi: <strong id="final-score" style="color: var(--pink-main);">0</strong> pontos.</p>
+        <p>Sua pontuação final foi: <strong id="final-score" style="color: var(--red-main);">0</strong> pontos.</p>
         <button onclick="location.reload()">Jogar Novamente</button>
     </div>
 </div>
 
 <script>
-// Efeitos sonoros
-const audioClick = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
-const audioCorrect = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3');
-const audioWrong = new Audio('https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3');
+// Sintetizador Web Audio API para tocar o Tema em tom de suspense
+let audioCtx = null;
+let isPlayingTheme = false;
+let themeTimeout = null;
 
-// Trilha Sonora Estilo Detetive/Suspense (Pixabay CDNs de alta estabilidade)
-const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=sneaky-spy-114212.mp3');
-bgMusic.loop = true;
-bgMusic.volume = 0.35;
+const notes = {
+    'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23,
+    'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00,
+    'A#4': 466.16, 'B4': 493.88, 'C5': 523.25, 'C#5': 554.37, 'D5': 587.33
+};
 
-function toggleMusic() {
-    if (bgMusic.paused) {
-        bgMusic.play().then(() => {
-            document.getElementById('btn-toggle-music').innerText = "🔊 Música Tocando";
-        }).catch(e => console.log("Erro ao tocar:", e));
+const suspenseMelody = [
+    { note: 'D#4', duration: 0.2 }, { note: 'E4', duration: 0.5 },
+    { note: 'F#4', duration: 0.2 }, { note: 'G4', duration: 0.5 },
+    { note: 'D#4', duration: 0.2 }, { note: 'E4', duration: 0.3 },
+    { note: 'F#4', duration: 0.2 }, { note: 'G4', duration: 0.3 },
+    { note: 'C5', duration: 0.2 },  { note: 'B4', duration: 0.3 },
+    { note: 'E4', duration: 0.2 },  { note: 'G4', duration: 0.3 },
+    { note: 'B4', duration: 0.2 },  { note: 'A#4', duration: 0.6 }
+];
+
+function playNote(freq, duration, startTime) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(freq, startTime);
+    
+    gain.gain.setValueAtTime(0.15, startTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+}
+
+function startPinkPantherTheme() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    let currentTime = audioCtx.currentTime;
+    suspenseMelody.forEach(item => {
+        playNote(notes[item.note], item.duration, currentTime);
+        currentTime += item.duration + 0.1;
+    });
+
+    const totalDuration = (currentTime - audioCtx.currentTime) * 1000;
+    themeTimeout = setTimeout(() => {
+        if (isPlayingTheme) startPinkPantherTheme();
+    }, totalDuration);
+}
+
+function togglePinkPantherTheme() {
+    const btn = document.getElementById('btn-toggle-music');
+    if (!isPlayingTheme) {
+        isPlayingTheme = true;
+        btn.innerText = "🔊 Tema Tocando";
+        startPinkPantherTheme();
     } else {
-        bgMusic.pause();
-        document.getElementById('btn-toggle-music').innerText = "🔈 Música Pausada";
+        isPlayingTheme = false;
+        btn.innerText = "🔈 Tema Pausado";
+        clearTimeout(themeTimeout);
     }
 }
 
 function playClickSound() {
-    audioClick.currentTime = 0;
-    audioClick.play().catch(() => {});
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    playNote(440, 0.05, audioCtx.currentTime);
 }
 
-// Inicia no primeiro clique em qualquer lugar da tela
+function playCorrectSound() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    playNote(523.25, 0.1, audioCtx.currentTime);
+    playNote(659.25, 0.2, audioCtx.currentTime + 0.1);
+}
+
+function playWrongSound() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    playNote(220, 0.15, audioCtx.currentTime);
+    playNote(196, 0.25, audioCtx.currentTime + 0.15);
+}
+
 document.addEventListener('click', () => {
-    if (bgMusic.paused) {
-        bgMusic.play().then(() => {
-            document.getElementById('btn-toggle-music').innerText = "🔊 Música Tocando";
-        }).catch(() => {});
+    if (!isPlayingTheme) {
+        togglePinkPantherTheme();
     }
 }, { once: true });
 
@@ -371,7 +427,7 @@ class Game {
         feedback.classList.remove("hidden");
 
         if (selectedType === currentCase.answer) {
-            audioCorrect.play().catch(() => {});
+            playCorrectSound();
             let pointsEarned = 0;
             if (this.cluesRevealed === 0) pointsEarned = 5;
             else if (this.cluesRevealed === 1) pointsEarned = 3;
@@ -388,7 +444,7 @@ class Game {
                 this.loadCase();
             }, 1500);
         } else {
-            audioWrong.play().catch(() => {});
+            playWrongSound();
             feedback.className = "wrong";
             feedback.innerText = "Pista falsa! Tente analisar os fatos novamente.";
         }
